@@ -1,0 +1,1 @@
+{"root":["./src/app.ts","./src/index.ts","./src/config/db.ts","./src/controllers/auth.ts","./src/routes/campaign.ts","./src/routes/testimonial.ts","./src/routes/user.ts"],"version":"5.9.3"}
