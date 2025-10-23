@@ -1,189 +1,177 @@
-import { type Request, type Response } from "express";
+import {} from "express";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-
-
-export const createTestimonial = async (req: Request, res: Response) => {
-    const { campaignId, name, email, message} = req.body
-    
-
+export const createTestimonial = async (req, res) => {
+    const { campaignId, name, email, message } = req.body;
     try {
         const newTestimonial = await prisma.testimonial.create({
             data: { campaignId, name, email, message }
-        })
-        res.status(201).json({ newTestimonial })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
+        });
+        res.status(201).json({ newTestimonial });
     }
-}
-
-export const getAllTestimonials = async (req: Request, res: Response) => {
-    const { campaignId } = req.params
-
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const getAllTestimonials = async (req, res) => {
+    const { campaignId } = req.body;
     try {
         const testimonials = await prisma.testimonial.findMany({
             where: {
-                campaignId: campaignId as string
+                campaignId: campaignId
             }
-        })
-
-        res.send(testimonials)
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
+        });
+        res.send(testimonials);
     }
-}
-
-export const deleteTestimonial = async (req: Request, res: Response) => {
-    const { testimonialId, campaignId } = req.body
-
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const deleteTestimonial = async (req, res) => {
+    const { testimonialId, campaignId } = req.body;
     try {
         const deleteTestimonial = await prisma.testimonial.delete({
             where: {
-                id: testimonialId as string,
-                campaignId: campaignId as string
+                id: testimonialId,
+                campaignId: campaignId
             }
-        })
-        res.status(200).json({ deleteTestimonial })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
+        });
+        res.status(200).json({ deleteTestimonial });
     }
-}
-
-export const archiveTestimonial = async (req: Request, res: Response) => {
-    const { testimonialId, campaignId } = req.body
-
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const archiveTestimonial = async (req, res) => {
+    const { testimonialId, campaignId } = req.body;
     try {
         const archiveTestimonial = await prisma.testimonial.update({
             where: {
-                id: testimonialId as string,
-                campaignId: campaignId as string
+                id: testimonialId,
+                campaignId: campaignId
             },
             data: { archived: true }
-        })
-        res.status(200).json({ archiveTestimonial })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
+        });
+        res.status(200).json({ archiveTestimonial });
     }
-}
-
-export const unarchiveTestimonial = async (req: Request, res: Response) => {
-    const { testimonialId, campaignId } = req.body
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const unarchiveTestimonial = async (req, res) => {
+    const { testimonialId, campaignId } = req.body;
     try {
         const unarchiveTestimonial = await prisma.testimonial.update({
             where: {
-                id: testimonialId as string,
-                campaignId: campaignId as string
+                id: testimonialId,
+                campaignId: campaignId
             },
             data: { archived: false }
-        })
-        res.status(200).json({ unarchiveTestimonial })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal server error" })
+        });
+        res.status(200).json({ unarchiveTestimonial });
     }
-}
-
-export const getArchivedTestimonials = async (req: Request, res: Response) => {
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const getArchivedTestimonials = async (req, res) => {
     const { campaignId } = req.body;
     try {
         const archivedTestimonials = await prisma.testimonial.findMany({
             where: {
                 archived: true,
-                campaignId: campaignId as string
+                campaignId: campaignId
             }
-        })
+        });
         res.send(archivedTestimonials);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
-
-export const favouriteTestimonial = async (req: Request, res: Response) => {
+};
+export const favouriteTestimonial = async (req, res) => {
     const { testimonialId, campaignId } = req.body;
-
     try {
         const likeTestimonial = await prisma.testimonial.update({
             where: {
-                id: testimonialId as string,
-                campaignId: campaignId as string
+                id: testimonialId,
+                campaignId: campaignId
             },
             data: {
                 favourite: true
             }
-        })
+        });
         res.send(likeTestimonial);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
-
-export const unfavouriteTestimonial = async (req: Request, res: Response) => {
+};
+export const unfavouriteTestimonial = async (req, res) => {
     const { testimonialId, campaignId } = req.body;
     try {
         const unlikeTestimonial = await prisma.testimonial.update({
             where: {
-                id: testimonialId as string,
-                campaignId: campaignId as string
+                id: testimonialId,
+                campaignId: campaignId
             },
             data: {
                 favourite: false
             }
-        })
+        });
         res.send(unlikeTestimonial);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
-
-export const getFavouriteTestimonials = async (req: Request, res: Response) => {
+};
+export const getFavouriteTestimonials = async (req, res) => {
     const { campaignId } = req.body;
     try {
         const favouriteTestimonials = await prisma.testimonial.findMany({
             where: {
                 favourite: true,
-                campaignId: campaignId as string
+                campaignId: campaignId
             }
-        })
+        });
         res.send(favouriteTestimonials);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
-
-export const getTestimonialsByCampaign = async (req: Request, res: Response) => {
+};
+export const getTestimonialsByCampaign = async (req, res) => {
     const { campaignId } = req.body;
     try {
         const testimonials = await prisma.testimonial.findMany({
             where: {
-                campaignId: campaignId as string
+                campaignId: campaignId
             }
-        })
+        });
         res.send(testimonials);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
-
-export const embedTestimonial = async (req: Request, res: Response) => {
-    const { campaignId } = req.params
-
+};
+export const embedTestimonial = async (req, res) => {
+    const { campaignId } = req.body;
     try {
         const testimonials = await prisma.testimonial.findMany({
             where: {
-                campaignId: campaignId as string
+                campaignId: campaignId
             }
-        })
-
-
+        });
         const html = `
          <html>
         <head>
@@ -202,19 +190,19 @@ export const embedTestimonial = async (req: Request, res: Response) => {
         </head>
         <body>
           <h2>What People Say</h2>
-          ${testimonials.map((t: any) => `
+          ${testimonials.map((t) => `
                 <div class="testimonial">
                   <div class="name">${t.name}</div>
                   <div class="message">${t.message}</div>
-                </div>`
-              )}
+                </div>`)}
         </body>
       </html>
-        `
-
+        `;
         res.send(html);
-    } catch (error) {
+    }
+    catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
+};
+//# sourceMappingURL=testimonial.js.map

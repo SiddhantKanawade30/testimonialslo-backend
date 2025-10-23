@@ -5,7 +5,9 @@ const prisma = new PrismaClient()
 
 
 export const createCampaign = async(req: Request, res: Response) =>{
-       const { title , description , userId } = req.body
+       const { title , description } = req.body
+       //@ts-ignore
+       const userId = req.userId
 
        try{
         // Generate a unique share link for the campaign
@@ -30,7 +32,9 @@ export const createCampaign = async(req: Request, res: Response) =>{
 
 
 export const deleteCampaign = async(req: Request, res: Response) =>{
-    const { campaignId , userId } = req.body
+    const { campaignId } = req.body
+    //@ts-ignore
+    const userId = req.userId
     try{
         const deletedCampaign = await prisma.campaign.delete({
             where: { id: campaignId as string , userId: userId as string }
@@ -44,7 +48,8 @@ export const deleteCampaign = async(req: Request, res: Response) =>{
 
 
 export const getCampaigns = async(req: Request, res: Response) =>{
-    const { userId } = req.body
+    //@ts-ignore
+    const userId = req.userId
     try{
         const campaigns = await prisma.campaign.findMany({
             where: { userId: userId as string }
@@ -57,7 +62,9 @@ export const getCampaigns = async(req: Request, res: Response) =>{
 }
 
 export const editCampaign = async(req: Request, res: Response) =>{
-    const { campaignId , userId , title , description } = req.body
+    const { campaignId , title , description } = req.body
+    //@ts-ignore
+    const userId = req.userId
     try{
         const editedCampaign = await prisma.campaign.update({
             where: { id: campaignId as string , userId: userId as string },

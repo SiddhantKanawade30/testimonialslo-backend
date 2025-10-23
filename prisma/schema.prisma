@@ -21,7 +21,6 @@ model User {
   email String  @unique
   password String @unique
   campaigns Campaign[]
-  favorites Testimonial[] @relation("UserFavorites")
   createdAt DateTime @default(now())
 }
 
@@ -40,7 +39,6 @@ model Campaign{
 
 model Testimonial{
   id String @id @default(cuid())
-  userId String
   favourite Boolean @default(false)
   archived Boolean @default(false)
   campaign Campaign @relation(fields: [campaignId], references: [id])
@@ -48,6 +46,5 @@ model Testimonial{
   name String
   email String
   message String
-  favoritedBy User[] @relation("UserFavorites")
   createdAt DateTime @default(now())
 }

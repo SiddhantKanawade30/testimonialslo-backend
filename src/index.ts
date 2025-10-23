@@ -18,8 +18,8 @@ app.get("/", (req: Request,res:Response)=>{
 })
 
 app.use("/api/v1/auth", userRouter)
-app.use("api/v1/campaigns", campaignRouter)
-app.use("api/v1/testimonials", testimonialRouter)
+app.use("/api/v1/campaigns", campaignRouter)
+app.use("/api/v1/testimonials", testimonialRouter)
 
 
 app.listen(PORT, () => console.log(`backend server running on port: ${PORT}`))

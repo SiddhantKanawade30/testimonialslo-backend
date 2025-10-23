@@ -1,14 +1,19 @@
 import { Router } from "express";
 import { middleware } from "../middleware/middleware.js";
-import { createTestimonial, getAllTestimonials, deleteTestimonial, embedTestimonial } from "../controllers/testimonial.js";
-import { archiveTestimonial, unarchiveTestimonial, favouriteTestimonial, unfavouriteTestimonial, getArchivedTestimonials, getFavouriteTestimonials } from "../controllers/testimonial.js";
-
+import { createTestimonial, getAllTestimonials } from "../controllers/testimonial.js";
+import { archiveTestimonial, deleteTestimonial } from "../controllers/testimonial.js";
+import { unarchiveTestimonial } from "../controllers/testimonial.js";
+import { favouriteTestimonial } from "../controllers/testimonial.js";
+import { unfavouriteTestimonial } from "../controllers/testimonial.js";
+import { getArchivedTestimonials } from "../controllers/testimonial.js";
+import { getFavouriteTestimonials } from "../controllers/testimonial.js";
+import { embedTestimonial } from "../controllers/testimonial.js";
 
 
 const testimonialRouter = Router();
 
 testimonialRouter.post("/create", createTestimonial)
-testimonialRouter.get("/get", middleware, getAllTestimonials)
+testimonialRouter.get("/get/:campaignId", middleware, getAllTestimonials)
 testimonialRouter.delete("/delete", middleware, deleteTestimonial)
 testimonialRouter.put("/archive", middleware, archiveTestimonial)
 testimonialRouter.put("/unarchive", middleware, unarchiveTestimonial)
@@ -16,6 +21,6 @@ testimonialRouter.put("/favourite", middleware, favouriteTestimonial)
 testimonialRouter.put("/unfavourite", middleware, unfavouriteTestimonial)
 testimonialRouter.get("/archived", middleware, getArchivedTestimonials)
 testimonialRouter.get("/favourite", middleware, getFavouriteTestimonials)
-testimonialRouter.get("/embed", middleware, embedTestimonial)
+testimonialRouter.get("/embed/:campaignId", middleware, embedTestimonial)
 
 export default testimonialRouter;
