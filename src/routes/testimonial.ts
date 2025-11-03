@@ -11,7 +11,7 @@ const testimonialRouter = Router();
 
 testimonialRouter.post("/create", createTestimonial)
 testimonialRouter.get("/get/all", middleware, getAllUserTestimonials)
-testimonialRouter.get("/get/:campaignId", middleware, getTestimonialsByCampaign)
+testimonialRouter.get("/get/:campaignId", middleware, getTestimonialsByCampaign);
 
 testimonialRouter.delete("/delete", middleware, deleteTestimonial)
 testimonialRouter.put("/archive", middleware, archiveTestimonial)
