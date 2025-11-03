@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { middleware } from "../middleware/middleware.js";
-import { createTestimonial, getAllTestimonials } from "../controllers/testimonial.js";
+import { createTestimonial, getTestimonialsByCampaign, getAllUserTestimonials } from "../controllers/testimonial.js";
 import { archiveTestimonial, deleteTestimonial } from "../controllers/testimonial.js";
 import { unarchiveTestimonial } from "../controllers/testimonial.js";
 import { favouriteTestimonial } from "../controllers/testimonial.js";
@@ -10,7 +10,9 @@ import { getFavouriteTestimonials, embedTestimonial, getArchivedTestimonials, un
 const testimonialRouter = Router();
 
 testimonialRouter.post("/create", createTestimonial)
-testimonialRouter.get("/get/:campaignId", middleware, getAllTestimonials)
+testimonialRouter.get("/get/all", middleware, getAllUserTestimonials)
+testimonialRouter.get("/get/:campaignId", middleware, getTestimonialsByCampaign)
+
 testimonialRouter.delete("/delete", middleware, deleteTestimonial)
 testimonialRouter.put("/archive", middleware, archiveTestimonial)
 testimonialRouter.put("/unarchive", middleware, unarchiveTestimonial)

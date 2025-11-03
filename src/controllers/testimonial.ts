@@ -18,7 +18,7 @@ export const createTestimonial = async (req: Request, res: Response) => {
     }
 }
 
-export const getAllTestimonials = async (req: Request, res: Response) => {
+export const getTestimonialsByCampaign = async (req: Request, res: Response) => {
     const { campaignId } = req.params
 
     try {
@@ -161,20 +161,7 @@ export const getFavouriteTestimonials = async (req: Request, res: Response) => {
     }
 }
 
-export const getTestimonialsByCampaign = async (req: Request, res: Response) => {
-    const { campaignId } = req.body;
-    try {
-        const testimonials = await prisma.testimonial.findMany({
-            where: {
-                campaignId: campaignId as string
-            }
-        })
-        res.send(testimonials);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-}
+
 
 export const embedTestimonial = async (req: Request, res: Response) => {
     const { campaignId } = req.params
@@ -221,3 +208,52 @@ export const embedTestimonial = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
+
+export const getAllUserTestimonials = async (req: Request, res: Response) => {
+    //@ts-ignore
+    const userId = req.userId;
+
+    try {
+        const testimonials = await prisma.testimonial.findMany({
+            where: {
+                campaign: {
+                    userId: userId as string
+                },
+                archived: false
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                message: true,
+                favourite: true,
+                archived: true,
+                createdAt: true,
+                campaignId: true,
+                campaign: {
+                    select: {
+                        id: true,
+                        title: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            count: testimonials.length,
+            data: testimonials
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ 
+            success: false,
+            message: "Internal server error" 
+        });
+    }
+};
