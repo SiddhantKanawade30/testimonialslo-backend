@@ -20,6 +20,7 @@ testimonialRouter.put("/favourite", middleware, favouriteTestimonial)
 testimonialRouter.put("/unfavourite", middleware, unfavouriteTestimonial)
 testimonialRouter.get("/archived", middleware, getArchivedTestimonials)
 testimonialRouter.get("/favourite", middleware, getFavouriteTestimonials)
-testimonialRouter.get("/embed/:campaignId", middleware, embedTestimonial)
+testimonialRouter.get("/embed/:campaignId", middleware, embedTestimonial);
+
 
 export default testimonialRouter;

@@ -91,14 +91,23 @@ export const unarchiveTestimonial = async (req: Request, res: Response) => {
 }
 
 export const getArchivedTestimonials = async (req: Request, res: Response) => {
-    const { campaignId } = req.body;
+    //@ts-ignore
+    const userId = req.userId;
+
     try {
-        const archivedTestimonials = await prisma.testimonial.findMany({
+        const archivedTestimonials = await prisma.campaign.findMany({
             where: {
-                archived: true,
-                campaignId: campaignId as string
+                userId: userId as string
+            },
+            include: {
+                testimonials: {
+                    where: {
+                        archived: true
+                    }
+                }
             }
         })
+
         res.send(archivedTestimonials);
     } catch (error) {
         console.log(error);
@@ -146,14 +155,23 @@ export const unfavouriteTestimonial = async (req: Request, res: Response) => {
 }
 
 export const getFavouriteTestimonials = async (req: Request, res: Response) => {
-    const { campaignId } = req.body;
+    //@ts-ignore
+     const userId = req.userId;
+
     try {
-        const favouriteTestimonials = await prisma.testimonial.findMany({
+        const favouriteTestimonials = await prisma.campaign.findMany({
             where: {
-                favourite: true,
-                campaignId: campaignId as string
+                userId: userId as string
+            },
+            include: {
+                testimonials: {
+                    where: {
+                        favourite: true
+                    }
+                }
             }
         })
+
         res.send(favouriteTestimonials);
     } catch (error) {
         console.log(error);
