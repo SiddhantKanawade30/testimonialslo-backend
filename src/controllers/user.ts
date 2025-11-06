@@ -1,42 +1,37 @@
 import type { Request, Response } from "express"
 import { PrismaClient } from "@prisma/client"
+import { all } from "axios";
 const prisma = new PrismaClient()
 
 export const getCurrentUser = async (req: Request, res: Response) => {
-    //@ts-ignore
-    const { userId } = req.userId;
+   
     try{
+         //@ts-ignore
+    const userId = req.userId;
         const user = await prisma.user.findUnique({
-            where: {
-                id: userId
-            }
-        })
-
-        const campaigns = await prisma.campaign.findMany({
-            where: {
-                userId: userId
-            }
-        })
-
-        const campaignIds = campaigns.map((campaign) => campaign.id);
-
-        const testimonials = await prisma.testimonial.findMany({
-            where: {
-                campaignId: {
-                    in: campaignIds
+            where: { id: userId },
+            include:{
+                campaigns: {
+                    include:{ testimonials: true , _count: true }
                 }
             }
         })
 
-        const userData = {
-            ...user,
-            campaigns,
-            testimonials
-        }
+        const totalCampaigns = user?.campaigns.length;
 
-        res.status(200).json({ userData })
+        const totalTestimonials = user?.campaigns.reduce((acc,campaign)=>{
+            return acc + campaign.testimonials.length;
+        },0)     
+
+        const remainingSpace = 5 - totalCampaigns!   
+
+        const allTestimonials = user?.campaigns.flatMap(campaign => campaign.testimonials);
+        const sortTestimonial = allTestimonials?.sort((a,b)=> b.rating - a.rating)
+
+
+        res.status(200).json({ user, totalCampaigns, totalTestimonials, remainingSpace, sortTestimonial })
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" })
+        res.send(error)
     }
     
     

@@ -31,7 +31,7 @@ model Campaign{
      websiteUrl String?
      category String?
      shareLink String? @unique
-     user User @relation(fields: [userId] , references: [id])
+     user User @relation(fields: [userId] , references: [id], onDelete: Cascade)
      userId String
      testimonials Testimonial[]
      createdAt DateTime @default(now())
@@ -42,7 +42,7 @@ model Testimonial{
   id String @id @default(cuid())
   favourite Boolean @default(false)
   archived Boolean @default(false)
-  campaign Campaign @relation(fields: [campaignId], references: [id])
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
   name String
   email String

@@ -191,7 +191,6 @@ export const getFavouriteTestimonials = async (req: Request, res: Response) => {
 }
 
 
-
 export const embedTestimonial = async (req: Request, res: Response) => {
     const { campaignId } = req.params
 

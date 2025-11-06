@@ -5,11 +5,12 @@ import { archiveTestimonial, deleteTestimonial } from "../controllers/testimonia
 import { unarchiveTestimonial } from "../controllers/testimonial.js";
 import { favouriteTestimonial } from "../controllers/testimonial.js";
 import { getFavouriteTestimonials, embedTestimonial, getArchivedTestimonials, unfavouriteTestimonial } from "../controllers/testimonial.js";
-
+import { createVideoUpload } from "../controllers/video.js";
 
 const testimonialRouter = Router();
 
 testimonialRouter.post("/create", createTestimonial)
+testimonialRouter.post("/create-video-upload", createVideoUpload)
 testimonialRouter.get("/get/all", middleware, getAllUserTestimonials)
 testimonialRouter.get("/get/:campaignId", middleware, getTestimonialsByCampaign);
 
@@ -20,7 +21,7 @@ testimonialRouter.put("/favourite", middleware, favouriteTestimonial)
 testimonialRouter.put("/remove-favorite", middleware, unfavouriteTestimonial)
 testimonialRouter.get("/archived", middleware, getArchivedTestimonials)
 testimonialRouter.get("/favourite", middleware, getFavouriteTestimonials)
-testimonialRouter.get("/embed/:campaignId", middleware, embedTestimonial);
+testimonialRouter.get("/embed/:campaignId", embedTestimonial);
 
 
 export default testimonialRouter;
