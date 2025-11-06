@@ -4,16 +4,27 @@ const prisma = new PrismaClient();
 
 
 export const createTestimonial = async (req: Request, res: Response) => {
-    const { campaignId, name, email, message} = req.body
+    const { campaignId, name, email, message, rating } = req.body;
+
+    // Ensure rating is a number, default to 5 if not provided
+    let ratingValue = rating ? Number(rating) : 5;
+    
+   
     
 
     try {
         const newTestimonial = await prisma.testimonial.create({
-            data: { campaignId, name, email, message }
+            data: { 
+                campaignId, 
+                name, 
+                email, 
+                message, 
+                rating: ratingValue 
+            }
         })
         res.status(201).json({ newTestimonial })
     } catch (error) {
-        console.log(error)
+        console.log("Error creating testimonial:", error)
         res.status(500).json({ message: "Internal server error" })
     }
 }

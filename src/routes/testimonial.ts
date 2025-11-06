@@ -17,7 +17,7 @@ testimonialRouter.delete("/delete", middleware, deleteTestimonial)
 testimonialRouter.put("/archive", middleware, archiveTestimonial)
 testimonialRouter.put("/unarchive", middleware, unarchiveTestimonial)
 testimonialRouter.put("/favourite", middleware, favouriteTestimonial)
-testimonialRouter.put("/unfavourite", middleware, unfavouriteTestimonial)
+testimonialRouter.put("/remove-favorite", middleware, unfavouriteTestimonial)
 testimonialRouter.get("/archived", middleware, getArchivedTestimonials)
 testimonialRouter.get("/favourite", middleware, getFavouriteTestimonials)
 testimonialRouter.get("/embed/:campaignId", middleware, embedTestimonial);

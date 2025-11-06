@@ -47,5 +47,7 @@ model Testimonial{
   name String
   email String
   message String
+  rating Int @default(5) 
   createdAt DateTime @default(now())
 }
+
