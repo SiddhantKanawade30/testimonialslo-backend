@@ -19,14 +19,14 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 
         const totalCampaigns = user?.campaigns.length;
 
-        const totalTestimonials = user?.campaigns.reduce((acc,campaign)=>{
+        const totalTestimonials = user?.campaigns.reduce((acc:any,campaign:any)=>{
             return acc + campaign.testimonials.length;
         },0)     
 
         const remainingSpace = 5 - totalCampaigns!   
 
-        const allTestimonials = user?.campaigns.flatMap(campaign => campaign.testimonials);
-        const sortTestimonial = allTestimonials?.sort((a,b)=> b.rating - a.rating)
+        const allTestimonials = user?.campaigns.flatMap((campaign:any) => campaign.testimonials);
+        const sortTestimonial = allTestimonials?.sort((a:any,b:any)=> b.rating - a.rating)
 
 
         res.status(200).json({ user, totalCampaigns, totalTestimonials, remainingSpace, sortTestimonial })

@@ -34,7 +34,7 @@ export const createCampaign = async (req: Request, res: Response) => {
 
     try {
 
-        const result = await prisma.$transaction(async(tx)=>{
+        const result = await prisma.$transaction(async(tx:any)=>{
            
             const newCampaign = await tx.campaign.create({
                 data: {
