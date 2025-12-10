@@ -8,9 +8,6 @@ export const createTestimonial = async (req: Request, res: Response) => {
 
     // Ensure rating is a number, default to 5 if not provided
     let ratingValue = rating ? Number(rating) : 5;
-    
-   
-    
 
     try {
         const newTestimonial = await prisma.testimonial.create({

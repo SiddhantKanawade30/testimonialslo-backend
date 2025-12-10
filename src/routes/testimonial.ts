@@ -10,7 +10,7 @@ import { createVideoUpload } from "../controllers/video.js";
 const testimonialRouter = Router();
 
 testimonialRouter.post("/create", createTestimonial)
-testimonialRouter.post("/create-video-upload", createVideoUpload)
+testimonialRouter.get("/create-video-upload", createVideoUpload)
 testimonialRouter.get("/get/all", middleware, getAllUserTestimonials)
 testimonialRouter.get("/get/:campaignId", middleware, getTestimonialsByCampaign);
 

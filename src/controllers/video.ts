@@ -1,29 +1,27 @@
 import dotenv from "dotenv";
-import axios from "axios";
+import { Mux } from "@mux/mux-node";
 import type { Request, Response } from "express";
+
 dotenv.config();
 
-
 export const createVideoUpload = async (req: Request, res: Response) => {
-  const tokenId = process.env.MUX_TOKEN_ID;
-  const tokenSecret = process.env.MUX_TOKEN_SECRET;
-
   try {
-    const response = await axios.post(
-      "https://api.mux.com/video/v1/uploads",
-      {
-        cors_origin: process.env.FRONTEND_URL,
-        new_asset_settings: { playback_policies: ["public"], video_quality: "basic" },
-      },
-      {
-        auth: { username: tokenId!, password: tokenSecret! },
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    const mux = new Mux({
+      tokenId: process.env.MUX_TOKEN_ID!,
+      tokenSecret: process.env.MUX_TOKEN_SECRET!,
+    });
 
-    return res.json(response.data.data);
+    // Access uploads through mux.video.uploads
+    const upload = await mux.video.uploads.create({
+      new_asset_settings: {
+        playback_policies: ["public"],
+      },
+      cors_origin: "*", // Optional: Configure CORS if needed
+    });
+
+    return res.status(200).json(upload);
   } catch (error) {
-    console.error(error);
-    return res.json({ error: "Failed to create Mux upload" });
+    console.error("Mux upload creation error:", error);
+    return res.status(500).json({ error: "Failed to create Mux upload" });
   }
 };
