@@ -13,13 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Plan{
+  FREE
+  PREMIUM
+  ENTERPRISE
+}
+
 model User {
   id        String     @id @default(cuid())
   name      String
   email     String     @unique
   password  String?
   campaigns Campaign[]
+  plan      Plan  @default(FREE)
+  videoCount  Int @default(0)
+  razaorpaySubId String?
   createdAt DateTime   @default(now())
+  usages    Usage[]
 }
 
 model Campaign {
@@ -49,4 +59,15 @@ model Testimonial {
   message         String?
   rating          Int      @default(5)
   createdAt       DateTime @default(now())
+}
+
+
+model Usage {
+  id  String @id @default(cuid())
+  userId String 
+  month String
+  videoUsed Int @default(0)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId,month])
 }
