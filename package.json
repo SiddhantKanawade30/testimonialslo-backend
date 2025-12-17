@@ -27,6 +27,7 @@
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.17.1",
+    "razorpay": "^2.9.6",
     "typescript": "^5.9.3",
     "zod": "^4.1.12"
   }

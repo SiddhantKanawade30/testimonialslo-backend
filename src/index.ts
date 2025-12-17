@@ -6,6 +6,7 @@ dotenv.config()
 import userRouter from "./routes/user.js"
 import campaignRouter from "./routes/campaign.js"
 import testimonialRouter from "./routes/testimonial.js"
+import { paymentRouter } from "./routes/payment.js"
 import authRouter from "./routes/auth.js"
 
 const app = express()
@@ -20,6 +21,8 @@ app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/campaigns", campaignRouter)
 app.use("/api/v1/testimonials", testimonialRouter)
 app.use("/api/v1/user", userRouter)
+app.use("/api/v1/payments", paymentRouter)
+
 
 console.log("Routes mounted successfully");
 
