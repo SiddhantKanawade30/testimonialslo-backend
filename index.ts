@@ -3,11 +3,11 @@ import type { Request, Response, NextFunction } from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 dotenv.config()
-import userRouter from "./routes/user.js"
-import campaignRouter from "./routes/campaign.js"
-import testimonialRouter from "./routes/testimonial.js"
-import { paymentRouter } from "./routes/payment.js"
-import authRouter from "./routes/auth.js"
+import userRouter from "./src/routes/user.js"
+import campaignRouter from "./src/routes/campaign.js"
+import testimonialRouter from "./src/routes/testimonial.js"
+import { paymentRouter } from "./src/routes/payment.js"
+import authRouter from "./src/routes/auth.js"
 
 const app = express()
 const PORT = process.env.PORT
