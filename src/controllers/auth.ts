@@ -65,11 +65,11 @@ export const signin = async(req:Request, res: Response) =>{
             return
         }
 
-        const decodedPassword = bcrypt.compare(user.password as string, password)
+        const decodedPassword = await bcrypt.compare(user.password as string, password)
 
         if(!decodedPassword){
             res.status(400).json({
-                message : "incorrect password"
+                message : "Incorrect credentials"
             })
             return
         }
