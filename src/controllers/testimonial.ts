@@ -109,7 +109,11 @@ export const getTestimonialsByCampaign = async (
         id: campaignId as string,
       },
       include: {
-        testimonials: true,
+        testimonials: {
+          where:{
+            archived: false
+          }
+        },
       },
     });
 
@@ -301,11 +305,6 @@ export const embedTestimonial = async (req: Request, res: Response) => {
                                 ? `<div class="position">${t.position}</div>`
                                 : ""
                             }
-                            ${
-                              t.email
-                                ? `<div class="email">${t.email}</div>`
-                                : ""
-                            }
                         </div>
                     </div>
                 `;
@@ -323,11 +322,6 @@ export const embedTestimonial = async (req: Request, res: Response) => {
                             ${
                               t.position
                                 ? `<div class="position">${t.position}</div>`
-                                : ""
-                            }
-                            ${
-                              t.email
-                                ? `<div class="email">${t.email}</div>`
                                 : ""
                             }
                         </div>
