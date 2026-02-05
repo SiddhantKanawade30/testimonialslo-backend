@@ -126,3 +126,20 @@ export const editCampaign = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to edit campaign" });
   }
 };
+
+export const editTemplate = async(req: Request, res: Response) => {
+  const {campaignId, templateType} = req.body;
+  //@ts-ignore
+  const userId = req.userId;
+
+  try{
+    const editTemplate = await prisma.campaign.update({
+      where: {id: campaignId as string, userId: userId as string},
+      data: {templateType}
+    })
+    res.status(200).json({editTemplate})
+  }catch(error){
+    console.log(error)
+    res.status(500).json({message: "Failed to edit template"})
+  }
+}

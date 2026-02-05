@@ -9,7 +9,7 @@ export const createTestimonial = async (req: Request, res: Response) => {
     email,
     position,
     testimonialType,
-    message,
+    content,
     rating,
     playbackId,
   } = req.body;
@@ -31,43 +31,42 @@ export const createTestimonial = async (req: Request, res: Response) => {
       },
     });
 
-    if(testimonialType === "text"){
+    if (testimonialType === "TEXT") {
       const testimonialCount = await prisma.testimonial.count({
-      where: {
-         campaignId,
-        testimonialType: "text"
-       },
-    });
-
-    if (campaign?.user.plan == "FREE" && testimonialCount >= 5) {
-      return res.status(403).json({
-        message: "Free plan only allows 5 text testimonials per campaign",
-      });
-    }
-
-    }else if(testimonialType === "video"){
-      const testimonialCount = await prisma.campaign.findUnique({
-        where:{
-          id: campaignId
+        where: {
+          campaignId,
+          testimonialType: "TEXT",
         },
-        select:{
-          user:{
-            select:{
-              videoCount:true
-            }
-          }
-        }
-      })
+      });
 
-      if (campaign?.user.plan == "FREE" && (testimonialCount?.user.videoCount ?? 0) >= 2) {
+      if (campaign?.user.plan == "FREE" && testimonialCount >= 5) {
+        return res.status(403).json({
+          message: "Free plan only allows 5 text testimonials per campaign",
+        });
+      }
+    } else if (testimonialType === "VIDEO") {
+      const testimonialCount = await prisma.campaign.findUnique({
+        where: {
+          id: campaignId,
+        },
+        select: {
+          user: {
+            select: {
+              videoCount: true,
+            },
+          },
+        },
+      });
+
+      if (
+        campaign?.user.plan == "FREE" &&
+        (testimonialCount?.user.videoCount ?? 0) >= 2
+      ) {
         return res.status(403).json({
           message: "Free plan only allows 2 video testimonials per campaign",
         });
       }
     }
-    
-
-    
 
     const newTestimonial = await prisma.testimonial.create({
       data: {
@@ -76,20 +75,22 @@ export const createTestimonial = async (req: Request, res: Response) => {
         email,
         position,
         testimonialType,
-        message,
+        content,
         rating: ratingValue,
         playbackId,
       },
     });
 
     await prisma.user.update({
-      where:{
-        id: campaign?.userId as string
+      where: {
+        id: campaign?.userId as string,
       },
-      data:{
-        ...(testimonialType === "video" ? { videoCount: { increment: 1 } } : {})
-      }
-    })
+      data: {
+        ...(testimonialType === "VIDEO"
+          ? { videoCount: { increment: 1 } }
+          : {}),
+      },
+    });
     res.status(201).json({ newTestimonial });
   } catch (error) {
     console.log("Error creating testimonial:", error);
@@ -110,9 +111,9 @@ export const getTestimonialsByCampaign = async (
       },
       include: {
         testimonials: {
-          where:{
-            archived: false
-          }
+          where: {
+            archived: false,
+          },
         },
       },
     });
@@ -286,7 +287,7 @@ export const embedTestimonial = async (req: Request, res: Response) => {
         const stars =
           "★".repeat(t.rating || 0) + "☆".repeat(5 - (t.rating || 0));
 
-        if (t.testimonialType === "video" && t.playbackId) {
+        if (t.testimonialType === "VIDEO" && t.playbackId) {
           return `
                     <div class="testimonial testimonial-video">
                         <div class="video-container">
@@ -313,8 +314,8 @@ export const embedTestimonial = async (req: Request, res: Response) => {
                     <div class="testimonial testimonial-text">
                         <div class="rating">${stars}</div>
                         ${
-                          t.message
-                            ? `<div class="message">"${t.message}"</div>`
+                          t.content
+                            ? `<div class="message">"${t.content}"</div>`
                             : ""
                         }
                         <div class="testimonial-details">
@@ -503,7 +504,7 @@ export const getAllUserTestimonials = async (req: Request, res: Response) => {
         testimonialType: true,
         playbackId: true,
         rating: true,
-        message: true,
+        content: true,
         favourite: true,
         archived: true,
         createdAt: true,
@@ -531,5 +532,48 @@ export const getAllUserTestimonials = async (req: Request, res: Response) => {
       success: false,
       message: "Internal server error",
     });
+  }
+};
+
+export const importTestimonial = async (req: Request, res: Response) => {
+  
+  try {
+    const { campaignId, url, platform, name, email, position } = req.body;
+
+    if (!campaignId || !url || !platform)
+      return res.status(400).json({ message: "Missing fields" });
+
+    if (!["TWITTER", "INSTAGRAM"].includes(platform))
+      return res.status(400).json({ message: "Invalid platform" });
+
+    // Optional basic URL validation
+    if (
+      platform === "TWITTER" &&
+      !url.includes("twitter.com") &&
+      !url.includes("x.com")
+    )
+      return res.status(400).json({ message: "Invalid Twitter/X URL" });
+
+    if (platform === "INSTAGRAM" && !url.includes("instagram.com"))
+      return res.status(400).json({ message: "Invalid Instagram URL" });
+
+    const testimonial = await prisma.testimonial.create({
+      data: {
+        campaignId,
+        testimonialType: platform,
+        content: url,
+        name: name || "Imported User",
+        email: email || "imported@example.com",
+        position: position || null,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Imported successfully",
+      testimonial,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
