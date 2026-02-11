@@ -18,7 +18,7 @@ export const signup = async(req: Request, res: Response, next: NextFunction) =>{
         return res.status(400).json({message: "Name, email and password are required"})
     }
 
-    const hashedPassword = await bcrypt.hash(password,5)
+    const hashedPassword = await bcrypt.hash(password,12)
 
     try{
 
@@ -49,7 +49,7 @@ export const signup = async(req: Request, res: Response, next: NextFunction) =>{
 
 export const signin = async(req:Request, res: Response) =>{
 
-    const {email, password } = req.body
+    const {email, password } = req.body;
 
     try{
         const user = await prisma.user.findUnique({
@@ -65,7 +65,7 @@ export const signin = async(req:Request, res: Response) =>{
             return
         }
 
-        const decodedPassword = await bcrypt.compare(user.password as string, password)
+        const decodedPassword = await bcrypt.compare(password, user.password as string);
 
         if(!decodedPassword){
             res.status(400).json({
