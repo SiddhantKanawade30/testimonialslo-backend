@@ -1,7 +1,16 @@
-import express, { type Request, type Response, Router } from "express";
+import { type Request, type Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { middleware } from "../middleware/middleware.js";
+import { z } from "zod";
+
 const prisma = new PrismaClient();
+
+// Zod schema for campaign creation validation
+const createCampaignSchema = z.object({
+  title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
+  description: z.string().min(1, "Description is required").max(500, "Description must be less than 500 characters"),
+  websiteUrl: z.string().url("Invalid website URL").optional().or(z.literal("")),
+  category: z.string().min(1, "Category is required").max(50, "Category must be less than 50 characters"),
+});
 
 export const getCampaignById = async (req: Request, res: Response) => {
   const { campaignId } = req.params;
@@ -23,12 +32,23 @@ export const getCampaignById = async (req: Request, res: Response) => {
 };
 
 export const createCampaign = async (req: Request, res: Response) => {
-  const { title, description, websiteUrl, category } = req.body;
   const FRONTEND_URL = process.env.FRONTEND_URL;
   //@ts-ignore
   const userId = req.userId;
 
   try {
+    // Validate input using Zod schema
+    const validationResult = createCampaignSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      return res.status(400).json({ 
+        message: "Validation failed", 
+        errors: validationResult.error.issues 
+      });
+    }
+
+    const { title, description, websiteUrl, category } = validationResult.data;
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
