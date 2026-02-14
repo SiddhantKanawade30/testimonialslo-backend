@@ -1,8 +1,33 @@
-import {type Request, type Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import type { Request, Response } from "express";
+import { middleware } from "../middleware/middleware.js";
+import { z } from "zod";
+
 const prisma = new PrismaClient();
 
+// Zod schema for testimonial creation validation
+const createTestimonialSchema = z.object({
+  campaignId: z.string().min(1, "Campaign ID is required"),
+  name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().email("Invalid email format").max(255, "Email must be less than 255 characters"),
+  position: z.string().max(100, "Position must be less than 100 characters").optional(),
+  testimonialType: z.enum(["TEXT", "VIDEO", "TWITTER"], "Invalid testimonial type"),
+  content: z.string().max(1000, "Content must be less than 1000 characters").optional(),
+  rating: z.coerce.number().min(1, "Rating must be at least 1").max(5, "Rating must be at most 5").optional(),
+  playbackId: z.string().optional(),
+});
+
 export const createTestimonial = async (req: Request, res: Response) => {
+  // Validate input using Zod schema
+  const validationResult = createTestimonialSchema.safeParse(req.body);
+  
+  if (!validationResult.success) {
+    return res.status(400).json({ 
+      message: "Validation failed", 
+      errors: validationResult.error.issues 
+    });
+  }
+
   const {
     campaignId,
     name,
@@ -12,7 +37,7 @@ export const createTestimonial = async (req: Request, res: Response) => {
     content,
     rating,
     playbackId,
-  } = req.body;
+  } = validationResult.data;
 
   let ratingValue = rating ? Number(rating) : 5;
 
@@ -72,11 +97,11 @@ export const createTestimonial = async (req: Request, res: Response) => {
         campaignId,
         name,
         email,
-        position,
+        position: position || null,
         testimonialType,
-        content,
+        content: content || null,
         rating: ratingValue,
-        playbackId,
+        playbackId: playbackId || null,
       },
     });
 
