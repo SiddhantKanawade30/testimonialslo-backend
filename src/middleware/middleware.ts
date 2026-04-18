@@ -17,7 +17,7 @@ export const middleware = async(req:Request, res:Response, next: NextFunction) =
         req.userId = decodedToken.userId
         next()
     }catch(e){
-          console.log(e)
-          res.send("something went wrong")
+        console.error("Token validation failed:", e)
+        res.status(401).json({ message: "Invalid or expired token" })
     }
 }

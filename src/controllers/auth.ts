@@ -29,7 +29,7 @@ export const signup = async(req: Request, res: Response, next: NextFunction) =>{
         })
 
         if(existingUser){
-            return res.status(400).json({message: "User already exists"})
+            return res.status(409).json({message: "User already exists"})
         }
 
         const user = await prisma.user.create({
@@ -58,33 +58,48 @@ export const signin = async(req:Request, res: Response) =>{
             }
         })
 
-        if(!user){
-            res.status(400).json({
-                message : "user does not exist in our database"
+        if (!user) {
+            res.status(404).json({
+                message: "User does not exist in our database"
             })
             return
         }
 
-        const decodedPassword = await bcrypt.compare(password, user.password as string);
-
-        if(!decodedPassword){
-            res.status(400).json({
-                message : "Incorrect credentials"
+        if (!user.password) {
+            res.status(403).json({
+                message: "Password login is not enabled for this account. Please sign in with Google or reset your password."
             })
             return
         }
 
-        const token =  jwt.sign({userId : user.id}, JWT_SECRET as string)
+        const decodedPassword = await bcrypt.compare(password, user.password);
+
+        if (!decodedPassword) {
+            res.status(401).json({
+                message: "Incorrect credentials"
+            })
+            return
+        }
+
+        if (!JWT_SECRET) {
+            console.error("JWT_SECRET is not configured")
+            res.status(500).json({
+                message: "Server configuration error: JWT secret is missing"
+            })
+            return
+        }
+
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET)
 
         res.status(200).json({
-            message : "signin successful",
+            message: "signin successful",
             token
         })
 
-    }catch(e){
-
+    } catch (e) {
+        console.error("Signin error:", e)
         res.status(500).json({
-            message : "something went wrong"
+            message: "Something went wrong while signing in"
         })
     }
 }
