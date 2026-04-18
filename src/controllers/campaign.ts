@@ -9,7 +9,7 @@ const createCampaignSchema = z.object({
   title: z.string().min(1, "Title is required").max(100, "Title must be less than 100 characters"),
   description: z.string().min(1, "Description is required").max(500, "Description must be less than 500 characters"),
   websiteUrl: z.string().url("Invalid website URL").optional().or(z.literal("")),
-  category: z.string().min(1, "Category is required").max(50, "Category must be less than 50 characters"),
+  category: z.string().min(1, "Category is required").max(50, "Category must be less than 50 characters").optional(),
 });
 
 export const getCampaignById = async (req: Request, res: Response) => {
@@ -21,13 +21,22 @@ export const getCampaignById = async (req: Request, res: Response) => {
     });
 
     if (campaign) {
-      res.status(200).json(campaign);
+      res.status(200).json({
+        success: true,
+        campaign
+      });
     } else {
-      return res.status(404).json({ message: "Campaign not found" });
+      return res.status(404).json({ 
+        success: false,
+        message: "Campaign not found" 
+      });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to get campaign" });
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to get campaign" 
+    });
   }
 };
 
@@ -41,9 +50,16 @@ export const createCampaign = async (req: Request, res: Response) => {
     const validationResult = createCampaignSchema.safeParse(req.body);
     
     if (!validationResult.success) {
+      const errors = validationResult.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message,
+        code: issue.code
+      }));
+      
       return res.status(400).json({ 
+        success: false,
         message: "Validation failed", 
-        errors: validationResult.error.issues 
+        errors: errors
       });
     }
 
@@ -59,6 +75,7 @@ export const createCampaign = async (req: Request, res: Response) => {
 
     if (user?.plan == "FREE" && campaignCount >= 2) {
       return res.status(403).json({
+        success: false,
         message: "Free plan allows only 2 campaigns",
       });
     }
@@ -68,8 +85,8 @@ export const createCampaign = async (req: Request, res: Response) => {
         data: {
           title,
           description,
-          websiteUrl,
-          category,
+          websiteUrl: websiteUrl || null,
+          category: category || null,
           userId,
         },
       });
@@ -86,10 +103,17 @@ export const createCampaign = async (req: Request, res: Response) => {
       return updatedCampaign;
     });
 
-    res.status(200).json({ result });
+    res.status(201).json({ 
+      success: true,
+      message: "Campaign created successfully",
+      result 
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ 
+      success: false,
+      message: "Internal server error" 
+    });
   }
 };
 
@@ -101,10 +125,16 @@ export const deleteCampaign = async (req: Request, res: Response) => {
     const deletedCampaign = await prisma.campaign.delete({
       where: { id: campaignId as string, userId: userId as string },
     });
-    res.status(200).json({ deletedCampaign });
+    res.status(200).json({ 
+      success: true,
+      deletedCampaign 
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to delete campaign" });
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to delete campaign" 
+    });
   }
 };
 
@@ -124,10 +154,16 @@ export const getCampaigns = async (req: Request, res: Response) => {
         },
       },
     });
-    res.status(200).json(campaigns);
+    res.status(200).json({
+      success: true,
+      campaigns
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to get campaigns" });
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to get campaigns" 
+    });
   }
 };
 
@@ -140,10 +176,16 @@ export const editCampaign = async (req: Request, res: Response) => {
       where: { id: campaignId as string, userId: userId as string },
       data: { title, description },
     });
-    res.status(200).json({ editedCampaign });
+    res.status(200).json({ 
+      success: true,
+      editedCampaign 
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to edit campaign" });
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to edit campaign" 
+    });
   }
 };
 
@@ -157,9 +199,15 @@ export const editTemplate = async(req: Request, res: Response) => {
       where: {id: campaignId as string, userId: userId as string},
       data: {templateType}
     })
-    res.status(200).json({editTemplate})
+    res.status(200).json({
+      success: true,
+      editTemplate
+    });
   }catch(error){
     console.log(error)
-    res.status(500).json({message: "Failed to edit template"})
+    res.status(500).json({
+      success: false,
+      message: "Failed to edit template"
+    })
   }
 }
