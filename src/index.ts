@@ -19,6 +19,9 @@ app.use(cors());
 
 console.log("Mounting routes...");
 
+app.get("/health", (req: Request, res: Response) => {
+    res.status(200).send("Server is healthy");
+});
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/campaigns", campaignRouter)
 app.use("/api/v1/testimonials", testimonialRouter)
