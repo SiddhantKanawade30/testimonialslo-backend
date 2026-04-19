@@ -23,7 +23,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
             return acc + campaign.testimonials.length;
         },0)     
 
-        const remainingSpace = 5 - totalCampaigns!   
+        const remainingSpace = 2 - totalCampaigns!   
 
         const allTestimonials = user?.campaigns.flatMap((campaign:any) => campaign.testimonials);
         const sortTestimonial = allTestimonials?.sort((a:any,b:any)=> b.rating - a.rating)
